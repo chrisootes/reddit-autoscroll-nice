@@ -1,11 +1,6 @@
 import json
 import datetime
 import logging
-from warnings import filters
-
-import praw
-
-logger = logging.getLogger(__name__)
 
 import asyncpraw
 from asyncpraw import models
@@ -13,6 +8,7 @@ import requests
 
 import config
 
+logger = logging.getLogger(__name__)
 
 reddit = asyncpraw.Reddit(
     client_id=config.CLIENT_ID,
