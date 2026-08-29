@@ -2,6 +2,7 @@ import json
 import datetime
 import logging
 
+import praw
 import asyncpraw
 from asyncpraw import models
 import requests
@@ -103,6 +104,7 @@ async def parse_links(post: models.Submission):
                     direct_poster = media['s']['u']
                     logger.info(f"{post_id} direct_poster={direct_poster}")
                     posts.append({
+                        'post_name': post_name,
                         'post_id': post_id,
                         'user_id': user_id,
                         'user_name': user_name,
@@ -123,6 +125,7 @@ async def parse_links(post: models.Submission):
                     direct_poster = './img/black_pixel.png'
                     logger.info(f"{post_id} direct_url={direct_url}")
                     posts.append({
+                        'post_name': post_name,
                         'post_id': post_id,
                         'user_id': user_id,
                         'user_name': user_name,
@@ -214,6 +217,7 @@ async def parse_links(post: models.Submission):
             return None
 
         return  [{
+            'post_name': post_name,
             'post_id': post_id,
             'user_id': user_id,
             'user_name': user_name,
@@ -307,14 +311,15 @@ async def download_posts(after: str = '', sort: str = 'best', time: str = 'all',
     logger.debug(f"posts: {posts}")
     return posts
 
-#@st.cache_data
-async def multis():
+def multis():
     """
-    after: t3_link id
-    sort: best, hot, new, rising, controversial, top
-    t: hour, day, week, month, year, all
-    r: subreddit
-    m: multireddit
     """
-    l = await reddit.user.multireddits()
+    r = praw.Reddit(
+        client_id=config.CLIENT_ID,
+        client_secret=config.CLIENT_SECRET,
+        username=config.USERNAME,
+        password=config.PASSWORD,
+        user_agent=config.USER_AGENT
+    )
+    l = r.user.multireddits()
     return [m.display_name for m in l]
